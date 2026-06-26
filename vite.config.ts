@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  base: '/SeekOtherOfTheOrdinal/',
+  base: '/SeekOrderOfTheOrdinal/',
   server: {
     port: 5173,
     host: true

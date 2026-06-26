@@ -3,7 +3,6 @@ import Decimal from 'break_eternity.js'
 import {
   BASE,
   D,
-  canLimit,
   createZeroOrdinal,
   formatDecimal,
   formatOrdinalNumber,
@@ -12,7 +11,6 @@ import {
   getOrdinalStageLevel,
   getVisibleTermCount,
   isOrdinalCapReached,
-  limitOnce,
   OMEGA_OMEGA,
   ordinalToNatural,
   ordinalFromNatural,
@@ -22,7 +20,6 @@ import {
   renderOrdinalToPlain,
   renderOrdinalToKaTeX,
   successor,
-  tripleHighestTermExponent,
   type OrdinalValue
 } from '../utils/ordinal'
 import {
@@ -95,8 +92,6 @@ function createState(): GameState {
 // 从全局获取或创建状态
 const state: GameState = (window as any)[GLOBAL_KEY] || createState()
 ;(window as any)[GLOBAL_KEY] = state
-
-const AUTO_LOOP_INTERVAL_MS = 50
 
 let lastOrdinalLevel = 0
 let pulseTimer: ReturnType<typeof setTimeout> | null = null
@@ -231,12 +226,6 @@ function reset() {
     clearTimeout(pulseTimer)
     pulseTimer = null
   }
-  save()
-}
-
-function debugTriple() {
-  if (ordinalCapReached.value) return
-  setOrdinalAndCount(tripleHighestTermExponent(state.ordinalValue.value))
   save()
 }
 
@@ -699,52 +688,6 @@ function getTheoremCostAsOrdinal(theoremId: string): OrdinalValue {
     return ordinalFromNatural(D(BASE).pow(14 + level * 2).round())
   }
   return OMEGA_OMEGA
-}
-
-function omegaPowerWithOmegaTail(tail: number): OrdinalValue {
-  const exponent = {
-    terms: [{
-      exponent: { terms: [], constant: D(1) },
-      coefficient: D(1)
-    }],
-    constant: D(tail)
-  }
-  return {
-    terms: [{ exponent, coefficient: D(1) }],
-    constant: D(0)
-  }
-}
-
-function omegaPowerWithOmegaCoefficientAndTail(coefficient: number, tail: number): OrdinalValue {
-  return {
-    terms: [{
-      exponent: {
-        terms: [{
-          exponent: { terms: [], constant: D(1) },
-          coefficient: D(coefficient)
-        }],
-        constant: D(tail)
-      },
-      coefficient: D(1)
-    }],
-    constant: D(0)
-  }
-}
-
-function omegaPowerWithOmegaSquaredTail(tail: number): OrdinalValue {
-  return {
-    terms: [{
-      exponent: {
-        terms: [{
-          exponent: { terms: [], constant: D(2) },
-          coefficient: D(1)
-        }],
-        constant: D(tail)
-      },
-      coefficient: D(1)
-    }],
-    constant: D(0)
-  }
 }
 
 function getTheoremCostNatural(theoremId: string): Decimal {
